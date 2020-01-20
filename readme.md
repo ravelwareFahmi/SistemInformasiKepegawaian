@@ -9,4 +9,3 @@
 	<p>password : 3213100908975200</p>
 
 setelah di clone jangan lupa composernya di update
-composer update
