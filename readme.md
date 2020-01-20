@@ -7,3 +7,6 @@
 <h4>Pegawai</h4>	
     <p>email : fahmiyuda31@gmail.com</p>
 	<p>password : 3213100908975200</p>
+
+setelah di clone jangan lupa composernya di update
+composer update
