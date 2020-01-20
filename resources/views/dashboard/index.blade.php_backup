@@ -1,0 +1,60 @@
+@extends('layouts/app')
+@section('title','Dashboard')
+@section('content')
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Dashboard</h2>
+            <div class="panel">
+                <div id="dataNilai"></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@endsection
+{{-- cart cdn --}}
+@section('chart')
+    <script src="https://code.highcharts.com/highcharts.src.js"></script>
+    <script>
+        Highcharts.chart('dataNilai', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Perbandingan Jumlah Laki-laki dan Perempuan'
+            },
+            subtitle: {
+                text: 'Sistem Informasi Kepegawaian'
+            },
+            xAxis: {
+                categories: ["Laki-laki","Perempuan"],
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Jumlah Pegawai'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px"></span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.0f} Orang</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: 'Jumlah Pegawai',
+                data: [{{ $pegawaiL }},{{ $pegawaiP }}]
+            }]
+        });
+    </script>
+@endsection

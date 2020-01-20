@@ -1,0 +1,12 @@
+admin
+	email      : fahmiyuda28@gmail.com
+	password : admin
+
+format login pegawai
+	email : emailpegawai
+	password : nikpegawai
+
+contoh 
+Pegawai	email : fahmiyuda31@gmail.com
+	password : 3213100908975200
+	

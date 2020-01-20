@@ -1,0 +1,245 @@
+@extends('layouts/app')
+@section('title','Halaman Pegawai')
+@section('content')
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+
+            {{-- @if (session('fail'))
+                <div class="alert alert-danger">{{ session('fail') }}</div>
+            @endif --}}
+
+            @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+
+            <h2>Halaman Data Pegawai</h2>
+            {{-- button trigger modal --}}
+            {{-- <button type="button" class="btn btn-primary float-left" data-toggle="modal" data-target="#input">
+                Input Data
+            </button> --}}
+
+            {{-- input data  --}}
+            <a href="kepegawaian/create" class="btn btn-primary float-left">Input Data</a>
+
+            {{-- import button  --}}
+            <button type="button" class="btn btn-success float-left ml-2" data-toggle="modal" data-target="#importExcel">
+                Import Data
+            </button>
+
+            <a href="/kepegawaian/exportExcel"  class="btn btn-success ml-2">Export</a>
+
+            <form class="form-inline float-right">
+                <!-- Button trigger modal -->
+                    <select class="form-control ml-5" id="filter_gender" name="filter_gender">
+                        <option value="" selected>--Jenis Kelamin--</option>
+                        <option value="Laki-laki" @if($filter_gender == 'Laki-laki') selected @endif>Laki-laki</option>
+                        <option value="Perempuan" @if($filter_gender == 'Perempuan') selected @endif>Perempuan</option>
+                    </select>
+                    <select class="form-control ml-2" id="filter_departement" name="filter_departement">
+                        <option value="" selected>--Departement--</option>
+                        <option value="IT"  @if($filter_departement == 'IT') selected @endif>IT</option>
+                        <option value="Office" @if($filter_departement == 'Office') selected @endif>Office</option>
+                    </select>
+                    <select class="form-control ml-2" id="filter_devisi" name="filter_devisi">
+                        <option value="" selected>--Devisi--</option>
+                        <option value="Programer" @if($filter_devisi == 'Programer') selected @endif>Programer</option>
+                        <option value="Desaigner" @if($filter_devisi == 'Desaigner') selected @endif>Desaigner</option>
+                        <option value="Akuntan" @if($filter_devisi == 'Akuntan') selected @endif>Akuntan</option>
+                    </select>
+                     <select class="form-control ml-2" id="filter_date" name="filter_date">
+                        <option value="" selected>--Lama Bekerja--</option>
+                        <option value=5 @if($filter_date == 5) selected @endif> 5 >= tahun</option>
+                        <option value=4 @if($filter_date == 4) selected  @endif> 5 < tahun</option>
+                    </select>
+
+                    <button class="btn btn-primary my-2 my-sm-0 ml-3" type="submit">Filter</button>
+                    <a href="/kepegawaian" class="btn btn-success ml-2">Refresh</a>
+                </form>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <table id="myTable" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>NIK</th>
+                        <th>Nama</th>
+                        <th>Jenis Kelamin</th>
+                        <th>Departemen</th>
+                        <th>Devisi</th>
+                        <th>Tanggal Masuk</th>
+                        <th>Status</th>
+                        <th>Alamat</th>
+                        <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($pegawai as $p)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $p->nik }}</td>
+                            <td>{{ $p->nama }}</td>
+                            <td>{{ $p->jenis_kelamin }}</td>
+                            <td>{{ $p->departement }}</td>
+                            <td>{{ $p->devisi }}</td>
+                            <td>{{ date('d-m-Y', strtotime($p->tgl_masuk)) }}</td>
+                            <td>{{ $p->sts }}</td>
+                            <td>{{ $p->alamat }}</td>
+                            <td>
+                                <a href="/edit/pegawai/{{ $p->id }}" class="badge badge-warning">Edit</a>
+                                <a href="/delete/pegawai/{{ $p->id }}" class="badge badge-danger hapusData">Delete</a>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+@endsection
+
+@section('modal')
+<!-- Modal -->
+{{-- <div class="modal fade" id="input" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Input Data Pegawai</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="/kepegawaian/create" method="post">
+        <div class="modal-body">
+            @csrf
+            <div class="form-group">
+                <label for="nik">NIK</label>
+                <input type="text" class="form-control @error('nik') is-invalid @enderror" id="nik" name="nik" value="{{ old('nik') }}" placeholder="NIK" required minlength="16" maxlength="16">
+                <small id="nik" class="form-text text-muted">required number</small>
+            </div>
+            @error('nik')
+                <div class="invalid-feedback">
+                    {{ $message }}
+                </div>
+            @enderror
+            <div class="form-group">
+                <label for="nama">Nama</label>
+                <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama" name="nama" value="{{ old('nama') }}" placeholder="Nama" required>
+                <small id="nama" class="form-text text-muted">required</small>
+            </div>
+            @error('nama')
+                <div class="invalid-feedback">
+                    {{ $message }}
+                </div>
+            @enderror
+
+            <div class="form-group">
+                <label for="jenis_kelamin">Jenis Kelamin</label>
+                <select class="form-control" id="jenis_kelamin" name="jenis_kelamin">
+                    <option value="Laki-laki" @if($filter_gender == 'Laki-laki') selected @endif>Laki-laki</option>
+                    <option value="Perempuan" @if($filter_gender == 'Perempuan') selected @endif>Perempuan</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="departement">Departemen</label>
+                <select class="form-control" id="departement" name="departement">
+                    <option value="IT"{{(old('departement') == 'IT') ? 'selected' : '' }}>IT</option>
+                    <option value="Office"{{(old('departement') == 'Office') ? 'selected' : '' }}>Office</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="devisi">Devisi</label>
+                <select class="form-control" id="devisi" name="devisi">
+                    <option value="Programer"{{(old('devisi') == 'Programer') ? 'selected' : '' }}>Programer</option>
+                    <option value="Akuntan"{{(old('devisi') == 'Akuntan') ? 'selected' : '' }}>Akuntan</option>
+                    <option value="Desaigner"{{(old('devisi') == 'Desaigner') ? 'selected' : '' }}>Desaigner</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tgl_masuk">Tanggal Masuk</label>
+                <input type="text" class="form-control datepicker @error('tgl_masuk') is-invalid @enderror datetimepicker-input" id="tgl_masuk" name="tgl_masuk" data-toggle="datetimepicker" data-target=".datepicker" placeholder="Tanggal Masuk" autocomplete="off" required>
+                <small id="tgl_masuk" class="form-text text-muted">required / date format Year-month-days</small>
+            </div>
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select class="form-control" id="sts" name="sts">
+                    <option value="kontrak"{{(old('sts') == 'kontrak') ? 'selected' : '' }}>Kontrak</option>
+                    <option value="tetap"{{(old('sts') == 'tetap') ? 'selected' : '' }}>Tetap</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="alamat">Alamat</label>
+                <textarea class="form-control @error('alamat') is-invalid @enderror" id="alamat" name="alamat" rows="3" required>{{ old('alamat') }}
+                </textarea>
+                <small id="alamat" class="form-text text-muted">required</small>
+                @error('alamat')
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+          {{-- <button type="submit" class="btn btn-primary">Simpan Data</button> --}}
+          {{-- <input type="submit" name="submit" class="btn btn-primary" value="Simpan" />
+        </div>
+        </form>
+      </div> --}}
+    {{-- </div> --}}
+{{-- </div> --}}
+
+<!--MODAL UPLOAD -->
+<div class="modal fade" id="importExcel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Import Excel</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+         </div>
+         <div class="modal-body">
+             {!! Form::open(['route'=>'pegawai.import', 'class'=>'form-horizontal','enctype'=>'multipart/form-data']) !!}
+              {!! Form::file('data_pegawai') !!}
+
+              {{-- @if (session('errors'))
+              @foreach ($errors as $error)
+                  <li>{{ $error }}</li>
+                @endforeach
+              @endif
+
+              @if (session('success'))
+                  {{ session('success') }}
+              @endif --}}
+
+              {{-- <p>nama file harus : data_pegawai </p> --}}
+         </div>
+         <div class="modal-footer">
+             <a href="/sample/pegawaiSample.xlsx" class="btn btn-success" align="left"> Download Sample Pegawai</a>
+            <input type="submit" class="btn btn-primary" value="Import">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+        </form>
+        </div>
+      </div>
+    </div>
+@endsection
+
+
+
