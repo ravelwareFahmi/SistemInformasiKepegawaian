@@ -31,6 +31,5 @@ class ChangePasswordController extends Controller
         } else {
             return redirect()->back()->with('errorMsg','Current password has invalid');
         }
-
     }
 }
